@@ -1,7 +1,6 @@
 # created by Tianao Henry Zhang
-# do not distribute without the creator's consent
 # this script can only run in HyperMesh Python interpreter
-# version 1.0
+# version 1.2
 import hm
 import hw
 import hw.hv as hv
@@ -10,14 +9,13 @@ from datetime import datetime
 import os
 import csv
 
-MODEL_FILE = r"C:\Users\henry\Desktop\ASE\Project\Assignment 2\ASE_Project_Part2_3800178\leo_redesign_model.fem"
-RESULT_FILE = r"C:\Users\henry\Desktop\ASE\Project\Assignment 2\ASE_Project_Part2_3800178\leo_redesign_model.h3d"
-OUTPUT_DIR = r"C:\Users\henry\Desktop\ASE\Project\Assignment 2\ASE_Project_Part2_3800178\metallic\leo_redesign"
+MODEL_FILE = r"" # path to the modified .fem file
+RESULT_FILE = r"" # path to the result .h3d file
+OUTPUT_DIR = r"" # output directory
 LOADCASES = [1, 2]
 
 
 def result_query(**kwargs):
-
     # create and reset HyperView session
     ses = hw.Session()
     ses.new()
@@ -30,22 +28,23 @@ def result_query(**kwargs):
     print("Model and results loaded.")
     result = ses.get(hv.Result)
 
-    # result querying
     # set the numeric precision to 12
     legend = hv.LegendScalar(numericPrecision=12)
 
+    # result querying
     query_tool = hv.QueryResultsTool()
-    # all elements
+
+    # collect all elements
     element_collection = hv.Collection(hv.Element)
     query_tool.collection = element_collection
-    # NOTE: This line is validated in HyperView console
-    query_tool.setDataSourceQuery([['element', 'id'], ['element', 'config'], ['contour', 'value']])
 
-    # key = {loadcase_id, element_id}, value = dict
+    # NOTE: variables are all validated in HyperView console
+    query_tool.setDataSourceQuery([['element', 'id'], ['element', 'config'], ['contour', 'value']])
     data_type = kwargs["data_type"]
     comp_list = kwargs["data_component"]
 
     # for 2D elements: id, lc, XX, XY, YY, vonMises
+    # for 1D elements: none
     final_table = []
 
     for lc in LOADCASES:
